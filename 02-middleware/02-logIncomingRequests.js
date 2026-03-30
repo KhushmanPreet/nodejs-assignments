@@ -5,6 +5,12 @@ const app = express();
 
 function logRequests(req, res, next) {
     // write the logic for request log here
+    const method = req.method;
+    const path = req.path;
+
+    const timeStamp = new Date().toISOString();
+    console.log(method + ' ' + path + ' - ' + timeStamp);
+    next();
 }
 
 app.use(logRequests);

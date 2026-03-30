@@ -45,5 +45,82 @@
   const app = express();
   
   app.use(bodyParser.json());
+  let todos = [];
+
+  app.get('/todos', (req, res) => {
+    res.status(200).json(todos);
+  })
+
+  app.get('/todos/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const todo = todos.find(t => t.id === id);
+
+    if (!todo) {
+        res.status(404).json({"error": "Todo not found"})
+    }
+    else {
+        res.status(200).json(todo);
+    }
+
+})
+
+app.post("/todos", (req, res) => {
+
+    const {title, description} = req.body || {};
+    
+
+    if (!title || !description) {
+        return res.sendStatus(400)
+    }
+    const newID = todos.length + 1;
+    const newTodo = {
+        id: newID,
+        title, description
+    }
+    todos.push(newTodo)
+
+    res.status(201).json({id: newID})
+})
+
+
+
+app.delete('/todos/:id',(req, res) => {
+    const id = Number(req.params.id);
+
+    const todo = todos.find(t => t.id === id);
+
+
+    if (!todo) {
+        res.status(404).json({"error": "Todo not found"})
+    }
+    else {
+        console.log(todos);
+        todos = todos.filter(t => t.id !== id);
+        console.log(todos);
+        
+        res.sendStatus(200);
+    }
+})
+
+app.put("/todos/:id", (req, res) => {
+    const id = req.params.id;
+    const todo = todos.find(t => t.id === id)
+    const {title, description} = req.body || {};
+    
+
+    if (!title || !description) {
+        return res.sendStatus(400)
+    }
+    if (todo){
+     todo = {
+        id: id,
+        title, description
+    }
+    }
+
+    res.sendStatus(200);
+})
+
   
   module.exports = app;
